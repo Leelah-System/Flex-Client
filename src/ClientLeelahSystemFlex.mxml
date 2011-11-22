@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ViewNavigatorApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							xmlns:s="library://ns.adobe.com/flex/spark" firstView="views.ConnexionView">
+	
+	<fx:Script>
+		<![CDATA[
+			import domain.user.User;
+			
+			
+			public var user:User;
+		]]>
+	</fx:Script>
+	
+	<s:navigationContent>
+		<s:Button label="Retour" click="navigator.popView()"/>
+	</s:navigationContent>
+	
+</s:ViewNavigatorApplication>

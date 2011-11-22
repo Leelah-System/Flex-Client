@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:UserView xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:views="views.*"
+				viewActivate="productsViewviewActivateHandler(event)"
+				title="Liste des produits">
+	
+	<fx:Script>
+		<![CDATA[
+			import domain.core.LeelahMessage;
+			import domain.product.Product;
+			
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.ViewNavigatorEvent;
+			
+			
+			[Bindable]
+			protected var selectedProduct:Product = null;
+			
+			
+			protected function productsViewviewActivateHandler(event:ViewNavigatorEvent):void
+			{
+				if (user != null) {
+					allProductsHttpService.url = LeelahMessage.getFullUrl(user.url, 'product', user.token);
+					allProductsHttpService.send();
+				}
+			}
+			
+			protected function allProductsHttpServiceResultHandler(event:ResultEvent):void
+			{
+				var message:LeelahMessage = LeelahMessage.createObjectFromJsonObject(event);
+				
+				var listeProductObject:Object = message.getResultProperty("products");
+				
+				var productsCollection:Array = Product.createCollectionFromJsonObject(listeProductObject);
+				
+				productsList.dataProvider = new ArrayCollection(productsCollection);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:HTTPService id="allProductsHttpService"
+					   result="allProductsHttpServiceResultHandler(event)"/>
+	</fx:Declarations>
+	
+	<views:layout>
+		<s:HorizontalLayout />
+	</views:layout>
+
+	<s:List id="productsList"
+			width="33%" height="100%"
+			selectedItem="@{selectedProduct}"/>
+	
+	<s:VGroup width="66%" height="100%"
+			  paddingTop="20" paddingBottom="40" paddingLeft="15" paddingRight="15" gap="25">
+		<s:Label text="{selectedProduct.name}" />
+		<s:Label text="Reference: {selectedProduct.reference}" />
+		<s:Label text="{selectedProduct.description}"
+				 textAlign="start" width="100%"/>
+	</s:VGroup>
+	
+</views:UserView>

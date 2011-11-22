@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		title="Connexion Leelah-System">
+	
+	<fx:Script>
+		<![CDATA[
+			import domain.core.LeelahMessage;
+			import domain.user.User;
+			
+			import mx.core.FlexGlobals;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			
+			protected function buttonConnexionClickHandler(event:MouseEvent):void
+			{				
+				httpService.url = LeelahMessage.getFullUrl(adresseIpTextInput.text, "authenticate");
+ 				httpService.method = "POST";
+				
+				var request:Object = new Object;
+				request["login"] = loginTextInput.text;
+				request["password"] = passwordTextInput.text;
+				httpService.request = request; 
+				
+				httpService.send();
+			}
+			
+			protected function httpServiceResultHandler(event:ResultEvent):void
+			{				
+				var message:LeelahMessage = LeelahMessage.createObjectFromJsonObject(event);
+				
+				var userObject:Object = message.getResultProperty("user");
+				var user:User = null;
+				if (userObject != null)
+					user = User.createObjectFromJsonObject(userObject);
+				
+				if (user != null) {
+					user.url = adresseIpTextInput.text;
+					FlexGlobals.topLevelApplication.user = user;
+					navigator.pushView(AccueilView);
+				}
+			}
+			
+			protected function httpServiceFaultHandler(event:FaultEvent):void
+			{
+				errorLabel.text = "Impossible de se connecter sur " + adresseIpTextInput.text;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<s:HTTPService id="httpService"
+					   result="httpServiceResultHandler(event)"
+					   fault="httpServiceFaultHandler(event)"/>
+	</fx:Declarations>
+	
+	<s:layout>
+		<s:VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
+	</s:layout>
+	
+	<!-- Login -->
+	<s:Label text="Login" />
+	<s:TextInput id="loginTextInput"
+				 text="tbri"/>
+	
+	<!-- Password -->
+	<s:Label text="Password" />
+	<s:TextInput id="passwordTextInput"
+				 text="tbri"/>
+	
+	<!-- Adresse de connexion -->
+	<s:Label text="Adresse IP" />
+	<s:TextInput id="adresseIpTextInput"
+				 text="10.0.2.1:3000"/>
+		
+	<!-- Bouton de connexion -->
+	<s:Button id="connexionButton"
+			  label="Connexion"
+			  click="buttonConnexionClickHandler(event)"/>
+	
+	<s:Label id="errorLabel" />
+	
+</s:View>

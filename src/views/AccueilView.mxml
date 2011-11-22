@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<views:UserView xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:views="views.*"
+				title="Accueil" >
+
+	<fx:Script>
+		<![CDATA[
+			
+			protected function buttonProductsClickHandler(event:MouseEvent):void
+			{
+				navigator.pushView(ProductsView);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<views:layout>
+		<s:VerticalLayout paddingTop="20" paddingLeft="20"
+						  gap="30"/>
+	</views:layout>
+	
+	<s:Label text="Bienvenue {user.full_name}" />
+	
+	<s:Label text="Menu:" />
+	
+	<s:HGroup>
+		<s:Button label="Produits"
+				  click="buttonProductsClickHandler(event)"/>
+		<s:Button label="Utilisateurs" />
+	</s:HGroup>
+	
+</views:UserView>
